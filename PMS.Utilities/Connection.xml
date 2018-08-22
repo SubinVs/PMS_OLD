@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Database>
+  <Connection>
+    <Pos>
+      <Server>SUBINVS\SQLEXPRESS</Server>
+      <Database>Pos</Database>
+      <User>sa</User>
+      <Password>subinvs</Password>
+    </Pos>
+  </Connection>
+</Database>
