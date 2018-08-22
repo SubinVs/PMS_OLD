@@ -68,5 +68,10 @@ namespace POS
             Button temp = (Button)sender;
             MessageBox.Show("You have clicked on  : " + temp.Name);
         }
+
+        void HelloWorld()
+        {
+
+        }
     }
 }
