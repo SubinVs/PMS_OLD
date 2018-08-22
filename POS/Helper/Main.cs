@@ -1,55 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data.SqlClient;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using PMS.Utilities;
+using MetroFramework;
 using PMS.Utilities.BLL.POS;
 using PMS.Utilities.Model.POS;
 
-namespace POS
+namespace POS.Helper
 {
-    public partial class Form1 : Form
+    public class Main
     {
-        public Form1()
-        {
-            InitializeComponent();
-        }
-        
+        private tableBll tableBll;
 
-        private void button1_Click(object sender, EventArgs e)
+        public Main(frmTable frm)
         {
-            
+            tableBll = new tableBll();
+            GenerateTable(frm);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        public void GenerateTable(frmTable frm)
         {
-            tableBll tableBll = new tableBll();
             tableModel[] tableList = tableBll.TableList().ToArray();
 
             int rowTableLimit = 21, btnWidth = 50, btnHeight = 50;
-            int xAxis = 60, yAxis = 50, defaultYAxis = 50;
+            int xAxis = 60, yAxis = 60, defaultYAxis = 60;
             int count = 0, rowcount = 2;
 
             for (int i = 0; i < tableList.Length; i++)
             {
-                Button btn = new Button();
+                //Button btn = new Button();
+                MetroFramework.Controls.MetroButton btn = new MetroFramework.Controls.MetroButton();
                 btn.Name = tableList[i].id.ToString();
                 btn.Text = tableList[i].tableNo.ToString();
                 btn.Size = new Size(btnWidth, btnHeight);
-                btn.Font= new Font("Tahoma",9.25F,FontStyle.Bold);
+                btn.Font = new Font("Tahoma", 9.25F, FontStyle.Bold);
+                btn.UseCustomBackColor = true;
                 btn.BackColor = tableList[i].occupied ? Color.Red : Color.Green;
+                btn.UseCustomForeColor = true;
                 btn.ForeColor = Color.White;
                 btn.Location = new Point(xAxis + (60 * count), yAxis);//please adjust location as per your need
                 btn.Tag = tableList;
-                btn.Click += new EventHandler(OnButtonClick);
-                this.Controls.Add(btn);//this will add the control to form if you have panel or some other container then you have to specify the name of that container like...
-                                       //this.panel1.Controls.Add(temp);
-
+                btn.Click += new EventHandler(OnTableClick);
+                frm.Controls.Add(btn);//this will add the control to form if you have panel or some other container then you have to specify the name of that container like...
+                                      //this.panel1.Controls.Add(temp);
 
 
                 count++;
@@ -58,20 +50,15 @@ namespace POS
                     yAxis = defaultYAxis * rowcount;
                     //xAxis *= 3;
                     count = 0;
-                    rowcount ++;
+                    rowcount++;
                 }
             }
         }
 
-        private void OnButtonClick(object sender, EventArgs e)
+        private void OnTableClick(object sender, EventArgs e)
         {
             Button temp = (Button)sender;
             MessageBox.Show("You have clicked on  : " + temp.Name);
-        }
-
-        void HelloWorld()
-        {
-
         }
     }
 }
