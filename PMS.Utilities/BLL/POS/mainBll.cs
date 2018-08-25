@@ -41,14 +41,41 @@ namespace PMS.Utilities.BLL.POS
             param.Add("@areaId", areaId);
             return list.returnList("waiter_AllList", param);
         }
+
+        public List<ItemModel> GetItemList(int areaId)
+        {
+            posRepositoryList<ItemModel> list = new posRepositoryList<ItemModel>();
+            DynamicParameters param = new DynamicParameters();
+            param.Add("@areaId", areaId);
+            return list.returnList("item_AllList", param);
+        }
+
+        public List<ItemRateModel> GetItemRateList()
+        {
+            posRepositoryList<ItemRateModel> list = new posRepositoryList<ItemRateModel>();
+            DynamicParameters param = new DynamicParameters();
+            return list.returnList("rate_AllList", param);
+        }
     }
 
     public class MainHelper : MainBll
     {
-        private Dictionary<int, string> areaList = new Dictionary<int, string>();
-        private Dictionary<int, string> tableList = new Dictionary<int, string>();
-        private Dictionary<int, string> captainList = new Dictionary<int, string>();
-        private Dictionary<int, string> waiterList = new Dictionary<int, string>();
+        private Dictionary<int, string> areaList;
+        private Dictionary<int, string> tableList;
+        private Dictionary<int, string> captainList;
+        private Dictionary<int, string> waiterList;
+        private Dictionary<int, string> itemList;
+        private List<ItemRateModel> itemRatesList;
+
+        public MainHelper()
+        {
+            areaList = new Dictionary<int, string>();
+            tableList = new Dictionary<int, string>();
+            captainList = new Dictionary<int, string>();
+            waiterList = new Dictionary<int, string>();
+            itemList = new Dictionary<int, string>();
+            itemRatesList = new List<ItemRateModel>();
+        }
 
         public Dictionary<int, string> PopulateAreaDetails()
         {
@@ -73,6 +100,22 @@ namespace PMS.Utilities.BLL.POS
         {
             waiterList = GetWaiterList(Globals.AreaId).ToDictionary(n => n.Id, m => m.WaiterName);
             return waiterList;
+        }
+
+        public Dictionary<int, string> PopulateItemDetails()
+        {
+            itemList = GetItemList(Globals.AreaId).ToDictionary(n => n.Id, m => m.ItemName);
+            return itemList;
+        }
+
+        public void GetItemRate()
+        {
+            itemRatesList = GetItemRateList();
+        }
+
+        public double PopulateItemRate()
+        {
+            return itemRatesList.Where(n => n.ItemId.Equals(Globals.ItemId) && n.AreaId.Equals(Globals.AreaId)).Select(n => n.Rate).First();
         }
     }
 }

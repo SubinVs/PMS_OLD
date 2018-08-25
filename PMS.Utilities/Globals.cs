@@ -14,7 +14,10 @@ namespace PMS.Utilities
         public static int TableId { get; set; }
         public static int CaptainId { get; set; }
         public static int WaiterId { get; set; }
+        public static int Pax { get; set; }
 
         public static bool Valid { get; set; }
+
+        public static int ItemId { get; set; }
     }
 }

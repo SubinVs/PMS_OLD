@@ -31,13 +31,36 @@ namespace POS
 
         private void PopulateDetails()
         {
+            Globals.Pax = 1;
+            tbPax.Text = Globals.Pax.ToString();
+
             BindArea();
             if (Globals.Valid)
             {
                 BindTable();
                 BindCaptain();
                 BindWaiter();
+                BindItem();
+                BindItemRate();
             }
+            tbRate.Enabled = false;
+            ConfigDataGrid();
+        }
+
+        private void ConfigDataGrid()
+        {
+            DataGridViewTextBoxColumn ItemId = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxColumn ItemName = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxColumn Quantity = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxColumn Rate = new DataGridViewTextBoxColumn();
+            DataGridViewTextBoxColumn Total = new DataGridViewTextBoxColumn();
+
+            ItemName.HeaderText = "Item Name";
+            Quantity.HeaderText = "Quantity";
+            Rate.HeaderText = "Rate";
+            Total.HeaderText = "Total";
+
+            dgvItems.Columns.AddRange(ItemId, ItemName, Quantity, Rate, Total);
         }
 
         private void BindArea()
@@ -48,6 +71,7 @@ namespace POS
                 cbArea.DisplayMember = "Value";
                 cbArea.ValueMember = "Key";
 
+                Globals.AreaId = ((KeyValuePair<int, string>)cbArea.SelectedItem).Key;
                 Globals.Valid = true;
             }
             else
@@ -66,6 +90,8 @@ namespace POS
                 cbTable.DataSource = new BindingSource(_mainHelper.PopulateTableDetails(), null);
                 cbTable.DisplayMember = "Value";
                 cbTable.ValueMember = "Key";
+
+                Globals.TableId = ((KeyValuePair<int, string>)cbTable.SelectedItem).Key;
             }
             else
             {
@@ -82,6 +108,8 @@ namespace POS
                 cbCaptain.DataSource = new BindingSource(_mainHelper.PopulateCaptainDetails(), null);
                 cbCaptain.DisplayMember = "Value";
                 cbCaptain.ValueMember = "Key";
+
+                Globals.CaptainId = ((KeyValuePair<int, string>)cbCaptain.SelectedItem).Key;
             }
             else
             {
@@ -98,12 +126,40 @@ namespace POS
                 cbWaiter.DataSource = new BindingSource(_mainHelper.PopulateWaiterDetails(), null);
                 cbWaiter.DisplayMember = "Value";
                 cbWaiter.ValueMember = "Key";
+
+                Globals.WaiterId = ((KeyValuePair<int, string>)cbWaiter.SelectedItem).Key;
             }
             else
             {
                 Globals.WaiterId = 0;
                 cbWaiter.Enabled = false;
             }
+        }
+
+        private void BindItem()
+        {
+            if (_mainHelper.PopulateItemDetails().Count > 0 && Globals.Valid)
+            {
+                cbItems.Enabled = true;
+                cbItems.DataSource = new BindingSource(_mainHelper.PopulateItemDetails(), null);
+                cbItems.DisplayMember = "Value";
+                cbItems.ValueMember = "Key";
+
+                Globals.ItemId = ((KeyValuePair<int, string>)cbItems.SelectedItem).Key;
+            }
+            else
+            {
+                Globals.ItemId = 0;
+                cbWaiter.Enabled = false;
+            }
+        }
+
+        private void BindItemRate()
+        {
+            _mainHelper.GetItemRate();
+            Globals.ItemId = ((KeyValuePair<int, string>)cbItems.SelectedItem).Key;
+            if (_mainHelper.PopulateItemRate() > 0)
+                tbRate.Text = _mainHelper.PopulateItemRate().ToString();
         }
 
         private void cbArea_SelectionChangeCommitted(object sender, EventArgs e)
@@ -116,6 +172,8 @@ namespace POS
             BindTable();
             BindCaptain();
             BindWaiter();
+            BindItem();
+            BindItemRate();
         }
 
         private void cbTable_SelectionChangeCommitted(object sender, EventArgs e)
@@ -131,6 +189,41 @@ namespace POS
         private void cbWaiter_SelectionChangeCommitted(object sender, EventArgs e)
         {
             Globals.WaiterId = ((KeyValuePair<int, string>)cbWaiter.SelectedItem).Key;
+        }
+
+        private void cbItems_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            Globals.ItemId = ((KeyValuePair<int, string>)cbItems.SelectedItem).Key;
+            if (_mainHelper.PopulateItemRate() > 0)
+            {
+                tbRate.Text = _mainHelper.PopulateItemRate().ToString();
+            }
+            else
+            {
+                MessageBox.Show("Rate not set for this item");
+            }
+
+        }
+
+        private void tbPax_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))// && (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void tbQty_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+            {
+                MessageBox.Show("Ftftftft");
+            }
+        }
+        
+        private void PushDataToGrid()
+        {
+            //dgvItems.Columns[0].HeaderText = "Item Name";
         }
     }
 }
