@@ -16,7 +16,7 @@ namespace POS
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Helper.Main main = new Helper.Main(this);
+            
         }
 
         private void OnButtonClick(object sender, EventArgs e)
